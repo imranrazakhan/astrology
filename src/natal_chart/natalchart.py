@@ -21,64 +21,50 @@ import pkg_resources
 
 CURRENT_DIR = Path(__file__).parent
 
+ZODIAC_SIGNS = {
+    'Aries': '♈', 'Taurus': '♉', 'Gemini': '♊', 'Cancer': '♋', 'Leo': '♌', 'Virgo': '♍', 'Libra': '♎',
+    'Scorpio': '♏', 'Sagittarius': '♐', 'Capricorn': '♑', 'Aquarius': '♒', 'Pisces': '♓'
+}
+
+PLANET_SIGNS = {
+    'True_Node': '☊', 'Sun': '☉', 'Moon': '☾', 'Mars': '♂', 'Rahu': '☊', 'Jupiter': '♃', 'Saturn': '♄', 'Mercury': '☿',
+    'Ketu': '☋', 'Venus': '♀', 'Uranus': '', 'Mean_Node': '', 'Pluto': '', 'Neptune': ''
+}
+
 class NatalChart():
         
-        native_name = ""
-        birth_date_time = datetime.datetime.now()
-        ascendant_sign = ""
-        
-        zodiac_signs = {
-            'Aries':'♈','Taurus':'♉','Gemini':'♊','Cancer':'♋','Leo':'♌','Virgo':'♍','Libra':'♎',
-            'Scorpio':'♏','Sagittarius':'♐','Capricorn':'♑','Aquarius':'♒','Pisces':'♓'
-        }
-
-        planet_signs = {
-            'True_Node':'☊','Sun':'☉','Moon':'☾','Mars':'♂','Rahu':'☊','Jupiter':'♃','Saturn':'♄','Mercury':'☿',
-            'Ketu':'☋','Venus':'♀','Uranus':'','Mean_Node':'','Pluto':'','Neptune':''
-        }
-
-        #This list contains planets with all the astrological_info
-        planets=[]
-        sorted_zodiac_signs = {}
-
-        
         def __init__(self, native_name, native_gender, birth_date_time, birth_city, birth_country):
-            self.native_name     =  native_name
-            self.birth_date_time =  birth_date_time
-            dob = birth_date_time
-            self.birth_city      =  birth_city
-            self.birth_country   =  birth_country            
+            self.native_name        =   native_name
+            self.birth_date_time    =   birth_date_time
+            self.birth_city         =   birth_city
+            self.birth_country      =   birth_country  
+            self.planets            =   self._get_planets()  # Get Planets with their placements in Signs
+            self.ascendant_sign     =   self._set_ascendant_sign(native_gender)
+            self.sorted_zodiac_signs=   self._sort_zodiac_by_ascendant_sign()
 
-            # Get Planetry positions of against Native DOB - Year, Month, Day, Hour, Min
+        def _get_planets(self):
+            dob = self.birth_date_time
+            # Get Planetry positions against Native DOB - Year, Month, Day, Hour, Min
             # Kerykeion is a python library for Astrology. It can calculate all the planet and house positions.
-            native_chart = KrInstance(native_name, dob.year, dob.month, dob.day, dob.hour, dob.minute, birth_city, "")
-
-            # Get Planets with their placements in Signs
-            self.planets =  native_chart.planets_list
-            self.set_ascendant_sign(native_gender)
-            self.sort_zodiac_by_ascendant_sign(self.ascendant_sign)
-
+            native_chart = KrInstance(self.native_name, dob.year, dob.month, dob.day, dob.hour, dob.minute, self.birth_city, "")
+            return native_chart.planets_list
         
-        def set_ascendant_sign(self, native_gender):
+        def _set_ascendant_sign(self, native_gender):
             ascendant_significator_map = {'male': 'Sun', 'female': 'Moon'}
             ascendant_significator =  ascendant_significator_map[native_gender]
 
             for planet in self.planets:
                 if planet.name == ascendant_significator:
-                   self.ascendant_sign = planet.sign
+                   return planet.sign
                 
-        def sort_zodiac_by_ascendant_sign(self, ascendant_sign):
-            # Sort zodiac list to make ascendant sign in house1 or first memebr of zodiac list
-            signs = list(self.zodiac_signs.keys())
+        def _sort_zodiac_by_ascendant_sign(self):
+           
+            signs = list(ZODIAC_SIGNS.keys())   # Sort zodiac list to make ascendant sign in house1 or first memebr of zodiac list
 
-            start_index = next(i for i, key in enumerate(signs) if ascendant_sign in key)
-
-            # create a list of keys to be iterated over
-            signs = signs[start_index:] + signs[:start_index]
+            start_index = next(i for i, key in enumerate(signs) if self.ascendant_sign in key)
+            signs = signs[start_index:] + signs[:start_index]   # create a list of keys to be iterated over
             
-            for sign in signs:
-                value = self.zodiac_signs[sign]
-                self.sorted_zodiac_signs[sign] = value
+            return {sign: ZODIAC_SIGNS[sign] for sign in signs}
              
    
         def draw_natal_chart(self):
@@ -102,7 +88,7 @@ class NatalChart():
                         house_planet = house.find(f"{{http://www.w3.org/2000/svg}}text[@id='{planet_text_id}']")
 
                         if planet.retrograde and planet.name not in ["True_Node", "Mean_Node", "Pluto", "Uranus", "Neptune"]:
-                            house_planet.text=self.planet_signs[planet.name]
+                            house_planet.text   =   PLANET_SIGNS[planet.name]
                             tspan = ET.SubElement(house_planet,'tspan')
                             tspan.set('font-size', '20')
                             tspan.set('baseline-shift', 'sub')
@@ -112,7 +98,7 @@ class NatalChart():
                             planet_counter += 1
 
                         elif planet.name not in ["Mean_Node", "Pluto", "Uranus", "Neptune"]:
-                            house_planet.text=f"{self.planet_signs[planet.name]}"
+                            house_planet.text=f"{PLANET_SIGNS[planet.name]}"
                             title = ET.SubElement(house_planet,'title')
                             title.text = f"{ decimal_to_dms(planet.position) }"
                             planet_counter += 1
@@ -148,15 +134,19 @@ class NatalChart():
                         house_planet = house.find(f"{{http://www.w3.org/2000/svg}}text[@id='{planet_text_id}']")
 
                         if planet.retrograde and planet.name in ["Jupiter", "Sun", "Moon", "Saturn"]:
-                            house_planet.text=self.planet_signs[planet.name]
+                            house_planet.text   =   PLANET_SIGNS[planet.name]
                             tspan = ET.SubElement(house_planet,'tspan')
                             tspan.set('font-size', '20')
                             tspan.set('baseline-shift', 'sub')
                             tspan.text = "℞"
+                            title = ET.SubElement(house_planet,'title')
+                            title.text = f"{ decimal_to_dms(planet.position) }"
                             planet_counter += 1
                             
                         elif planet.name in ["Jupiter", "Sun", "Moon", "Saturn", "True_Node"]:
-                            house_planet.text=self.planet_signs[planet.name]
+                            house_planet.text   =   PLANET_SIGNS[planet.name]
+                            title = ET.SubElement(house_planet,'title')
+                            title.text = f"{ decimal_to_dms(planet.position) }"                            
                             planet_counter += 1
 
                         if( planet.name == 'True_Node'):
@@ -206,13 +196,9 @@ def main():
     chart = NatalChart(args.native_name, args.native_gender, args.dob, args.city_name, "")
     chart.draw_natal_chart()
 
-    if args.transit_date:
-        transitdate = args.transit_date
-    else:
-        transitdate = datetime.datetime.now()
-
-    chart = NatalChart(args.native_name, args.native_gender, transitdate, args.city_name, "")
-    chart.merg_transit_chart()
+    transit_date = args.transit_date if args.transit_date else datetime.datetime.now()
+    transit_chart = NatalChart(args.native_name, args.native_gender, transit_date, args.city_name, "")
+    transit_chart.merg_transit_chart()
 
     print("Chart has been generated with name:"+args.native_name+".svg, Please open this file in browser.")
 
