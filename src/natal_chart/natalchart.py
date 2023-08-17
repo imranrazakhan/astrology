@@ -120,20 +120,23 @@ class NatalChart():
             etree = ET.parse(   pkg_resources.resource_filename(__name__, f"../resources/{self.native_name}.svg") )
             svgroot = etree.getroot()
 
-            house_no = 1
-            for sign in self.sorted_zodiac_signs.keys():
+            for house_no  in range(1, 13):
                 house = svgroot.find(f".//{{*}}g[@id='house{house_no}']")
-                house_sign = house.find("{http://www.w3.org/2000/svg}text[@id='sign']")
-                house_sign.text=self.sorted_zodiac_signs[sign]
+                house_symbol = house.find("{http://www.w3.org/2000/svg}text[@id='sign']").text
+
+                house_sign=""
+                for key, value in ZODIAC_SIGNS.items():
+                    if value == house_symbol:
+                        house_sign += key[:3]
 
                 planet_counter = 6
                 for planet in self.planets:
-                    if sign.startswith(planet.sign) :
+                    
+                    if house_sign.startswith(planet.sign) :
                         planet_text_id = f"planet{house_no}{planet_counter}"
-                        print(planet_text_id)
                         house_planet = house.find(f"{{http://www.w3.org/2000/svg}}text[@id='{planet_text_id}']")
 
-                        if planet.retrograde and planet.name in ["Jupiter", "Sun", "Moon", "Saturn"]:
+                        if planet.retrograde and planet.name in ["Jupiter", "Sun", "Moon", "Saturn", "Mars"]:
                             house_planet.text   =   PLANET_SIGNS[planet.name]
                             tspan = ET.SubElement(house_planet,'tspan')
                             tspan.set('font-size', '20')
@@ -143,7 +146,7 @@ class NatalChart():
                             title.text = f"{ decimal_to_dms(planet.position) }"
                             planet_counter += 1
                             
-                        elif planet.name in ["Jupiter", "Sun", "Moon", "Saturn", "True_Node"]:
+                        elif planet.name in ["Jupiter", "Sun", "Moon", "Saturn", "Mars", "True_Node"]:
                             house_planet.text   =   PLANET_SIGNS[planet.name]
                             title = ET.SubElement(house_planet,'title')
                             title.text = f"{ decimal_to_dms(planet.position) }"                            
@@ -157,7 +160,6 @@ class NatalChart():
                             ketu_planet = ketu_house.find(f"{{http://www.w3.org/2000/svg}}text[@id='planet{ketu_house_no}8']")
                             ketu_planet.text="☋"
                             
-                house_no += 1
             
             # Save as .svg file
             etree.write(f"resources/{self.native_name}-transit.svg")

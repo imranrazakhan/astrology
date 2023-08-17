@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" onload="makeDraggable(evt)">
+ 
+ <style>
+      .static {
+        cursor: not-allowed;
+      }
+      .draggable {
+        cursor: move;
+      }
+    </style>
+    
+    <script type="text/javascript">
+      function makeDraggable(evt) {
+        var svg = evt.target;
+        svg.addEventListener('mousedown', startDrag, false);
+        svg.addEventListener('mousemove', drag, false);
+        svg.addEventListener('mouseup', endDrag, false);
+
+        function getMousePosition(evt) {
+          var CTM = svg.getScreenCTM();
+          return {
+            x: (evt.clientX - CTM.e) / CTM.a,
+            y: (evt.clientY - CTM.f) / CTM.d
+          };
+        }
+
+        var selectedElement, offset, transform;
+
+        function startDrag(evt) {
+          if (evt.target.classList.contains('draggable')) {
+            selectedElement = evt.target;
+            offset = getMousePosition(evt);
+
+            // Make sure the first transform on the element is a translate transform
+            var transforms = selectedElement.transform.baseVal;
+
+            if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
+              // Create an transform that translates by (0, 0)
+              var translate = svg.createSVGTransform();
+              translate.setTranslate(0, 0);
+              selectedElement.transform.baseVal.insertItemBefore(translate, 0);
+            }
+
+            // Get initial translation
+            transform = transforms.getItem(0);
+            offset.x -= transform.matrix.e;
+            offset.y -= transform.matrix.f;
+          }
+        }
+
+        function drag(evt) {
+          if (selectedElement) {
+            var coord = getMousePosition(evt);
+            transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+          }
+        }
+
+        function endDrag(evt) {
+          selectedElement = false;
+        }
+      }
+     </script>
+	
+	
+ 
+ 
+ <g font-size="45" fill="#0000ff" style="letter-spacing: -6;" font-family="Segoe UI Symbol">
+  <title>2011-11-02 19:30:00</title>
+  <rect fill="rgb(255,255,255)" stroke="rgb(0,0,0)" y="6" x="6" width="600" height="600" id="svg_3" />
+  <text id="dob" x="260" y="30" font-size="30" fill-opacity="0.05" />
+  <line stroke="#000000" y2="606" x2="606" y1="6" x1="6" id="li1" />
+  <line stroke="#000000" y2="6" x2="606" y1="606" x1="6" id="li2" />
+  <line stroke="#000000" y2="303" x2="6" y1="6" x1="303" id="li3" />
+  <line stroke="#000000" y2="303" x2="606" y1="6" x1="303" id="li4" />
+  <line stroke="#000000" y2="606" x2="303" y1="303" x1="6" id="li5" />
+  <line stroke="#000000" y2="606" x2="303" y1="303" x1="606" id="li6" />
+  
+  
+  
+  <g id="house1">
+	<text id="sign" y="295" x="295" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9807;</text>
+	<text id="planet11" y="180" x="282" class="draggable">&#9737;<title>9&#186;49'7"</title></text>
+	<text id="planet12" y="180" x="245" class="draggable">&#9791;<title>29&#186;51'46"</title></text>
+	<text id="planet13" y="180" x="335" class="draggable" />
+	<text id="planet14" y="180" x="200" class="draggable" />
+	<text id="planet15" y="180" x="373" class="draggable" />
+	<text id="planet16" y="130" x="220" fill="#ff0000" class="draggable" />
+	<text id="planet17" y="130" x="255" fill="#ff0000" class="draggable" />
+	<text id="planet18" y="130" x="290" fill="#ff0000" class="draggable" />
+	<text id="planet19" y="130" x="325" fill="#ff0000" class="draggable" />
+  </g>
+ 
+  <g id="house2">
+	<text x="145" y="142" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9808;</text>
+    <text id="planet21" y="80" x="135" class="draggable">&#9792;<title>0&#186;17'29"</title></text>
+	<text id="planet22" y="80" x="98" class="draggable">&#9738;<title>14&#186;52'58"</title></text> 
+	<text id="planet23" y="80" x="180" class="draggable" />
+	<text id="planet24" y="50" x="60" class="draggable" />
+	<text id="planet25" y="50" x="202" class="draggable" />
+	<text id="planet26" y="110" x="98" fill="#ff0000" class="draggable" /> 
+	<text id="planet27" y="110" x="135" fill="#ff0000" class="draggable" />
+	<text id="planet28" y="110" x="177" fill="#ff0000" class="draggable" />
+  </g>
+  
+  <g id="house3">
+    <text x="9" y="276" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9809;</text>  
+	<text id="planet31" y="165" x="42" class="draggable" />
+	<text id="planet32" y="165" x="80" class="draggable" />
+	<text id="planet33" y="165" x="10" class="draggable" />
+	<text id="planet34" y="115" x="10" class="draggable" />
+	<text id="planet35" y="115" x="40" class="draggable" />
+	<text id="planet36" y="220" x="10" fill="#ff0000" class="draggable" />
+	<text id="planet37" y="220" x="40" fill="#ff0000" class="draggable" />
+	<text id="planet38" y="220" x="70" fill="#ff0000" class="draggable" />
+  </g>
+  
+  <g id="house4">
+    <text x="143" y="444" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9810;</text>  
+    <text id="planet41" y="318" x="80" class="draggable">&#9790;<title>8&#186;45'58"</title></text>
+	<text id="planet42" y="318" x="130" class="draggable" />
+	<text id="planet43" y="318" x="170" class="draggable" />
+	<text id="planet44" y="318" x="35" class="draggable" />
+	<text id="planet45" y="318" x="220" class="draggable" />
+	<text id="planet46" y="380" x="115" fill="#ff0000" class="draggable" />
+	<text id="planet47" y="380" x="145" fill="#ff0000" class="draggable" />
+	<text id="planet48" y="380" x="175" fill="#ff0000" class="draggable" />
+	<text id="planet49" y="380" x="205" fill="#ff0000" class="draggable" />
+  </g>
+  
+  
+  <g id="house5">
+    <text x="8" y="580" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9811;</text> 
+	<text id="planet51" y="461" x="47" class="draggable" />
+	<text id="planet52" y="461" x="86" class="draggable" />
+	<text id="planet53" y="461" x="6" class="draggable" />
+	<text id="planet54" y="410" x="6" class="draggable" />
+	<text id="planet55" y="410" x="44" class="draggable" />
+	<text id="planet56" y="512" x="6" fill="#ff0000" class="draggable">&#9796;<tspan font-size="20" baseline-shift="sub">&#8478;</tspan><title>4&#186;34'2"</title></text>
+	<text id="planet57" y="512" x="44" fill="#ff0000" class="draggable" />
+	<text id="planet58" y="555" x="15" fill="#ff0000" class="draggable" />
+  </g>
+  
+  
+  <g id="house6">
+    <text x="262" y="601" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9800;</text>
+	<text id="planet61" y="590" x="133" class="draggable" />
+	<text id="planet62" y="590" x="170" class="draggable" />
+	<text id="planet63" y="590" x="92" class="draggable" />
+	<text id="planet64" y="590" x="210" class="draggable" />
+	<text id="planet65" y="590" x="53" class="draggable" />
+	<text id="planet66" y="543" x="90" fill="#ff0000" class="draggable">&#9738;<title>26&#186;42'39"</title></text>
+	<text id="planet67" y="543" x="135" fill="#ff0000" class="draggable" />
+	<text id="planet68" y="502" x="135" fill="#ff0000" class="draggable" />
+	<text id="planet69" y="543" x="170" fill="#ff0000" class="draggable" />
+  </g>
+  
+  
+  <g id="house7">
+    <text x="292" y="596" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9801;</text>
+	<text id="planet71" y="466" x="290" class="draggable">&#9795;<tspan font-size="20" baseline-shift="sub">&#8478;</tspan><title>4&#186;40'20"</title></text>
+	<text id="planet72" y="466" x="250" class="draggable" />
+	<text id="planet73" y="466" x="330" class="draggable" />
+	<text id="planet74" y="466" x="200" class="draggable" />
+	<text id="planet75" y="466" x="380" class="draggable" />
+	<text id="planet76" y="530" x="225" fill="#ff0000" class="draggable">&#9795;<title>15&#186;3'11"</title></text>
+	<text id="planet77" y="530" x="260" fill="#ff0000" class="draggable" />
+	<text id="planet78" y="530" x="295" fill="#ff0000" class="draggable" />
+	<text id="planet79" y="530" x="330" fill="#ff0000" class="draggable" />
+  </g>
+  
+  <g id="house8">
+    <text x="561" y="604" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9802;</text>
+	<text id="planet81" y="590" x="430" class="draggable" />
+	<text id="planet82" y="590" x="468" class="draggable" />
+	<text id="planet83" y="590" x="391" class="draggable" />
+	<text id="planet84" y="590" x="350" class="draggable" />
+	<text id="planet85" y="590" x="510" class="draggable">&#9739;</text>
+	<text id="planet86" y="538" x="405" fill="#ff0000" class="draggable" />
+	<text id="planet87" y="538" x="440" fill="#ff0000" class="draggable" />	
+	<text id="planet88" y="538" x="475" fill="#ff0000" class="draggable" />	
+	<text id="planet89" y="490" x="440" fill="#ff0000" class="draggable" />	
+  </g>
+  
+  <g id="house9">
+    <text x="580" y="577" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9803;</text>
+	<text id="planet91" y="473" x="520" class="draggable" />
+	<text id="planet92" y="473" x="560" class="draggable" />
+	<text id="planet93" y="473" x="475" class="draggable" />
+	<text id="planet94" y="525" x="565" class="draggable" />
+	<text id="planet95" y="525" x="535" class="draggable" />
+	<text id="planet96" y="427" x="515" fill="#ff0000" class="draggable" />
+	<text id="planet97" y="427" x="560" fill="#ff0000" class="draggable" />	
+	<text id="planet98" y="390" x="535" fill="#ff0000" class="draggable" />	
+	<text id="planet99" y="380" x="565" fill="#ff0000" class="draggable" />	
+  </g>
+  
+  <g id="house10">
+    <text x="442" y="441" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9804;</text>
+	<text id="planet101" y="320" x="435" class="draggable">&#9794;<title>25&#186;34'26"</title></text>
+	<text id="planet102" y="320" x="475" class="draggable" />
+	<text id="planet103" y="320" x="390" class="draggable" />
+	<text id="planet104" y="320" x="350" class="draggable" />
+	<text id="planet105" y="320" x="510" class="draggable" />
+	<text id="planet106" y="260" x="390" fill="#ff0000" class="draggable">&#9737;<title>24&#186;26'33"</title></text>
+	<text id="planet107" y="260" x="425" fill="#ff0000" class="draggable" />
+	<text id="planet108" y="260" x="460" fill="#ff0000" class="draggable" />
+	<text id="planet109" y="260" x="495" fill="#ff0000" class="draggable" />
+  </g>
+  
+  <g id="house11">
+    <text x="585" y="283" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9805;</text>
+	<text id="planet111" y="167" x="522" class="draggable" />
+	<text id="planet112" y="167" x="558" class="draggable" />
+	<text id="planet113" y="167" x="485" class="draggable" />
+	<text id="planet114" y="220" x="515" class="draggable" />
+	<text id="planet115" y="220" x="555" class="draggable" />
+	<text id="planet116" y="115" x="525" fill="#ff0000" class="draggable">&#9790;<title>7&#186;30'49"</title></text>
+	<text id="planet117" y="115" x="555" fill="#ff0000" class="draggable">&#9794;<title>23&#186;39'30"</title></text>	
+	<text id="planet118" y="80" x="565" fill="#ff0000" class="draggable" />	
+	<text id="planet119" y="255" x="555" fill="#ff0000" class="draggable" />	
+  </g>
+  
+  <g id="house12">
+    <text x="444" y="146" id="sign" font-size="22" font-family="Segoe UI Symbol" fill="black" class="draggable">&#9806;</text>
+	<text id="planet121" y="50" x="427" class="draggable">&#9796;<title>22&#186;34'12"</title></text>
+	<text id="planet122" y="50" x="467" class="draggable" /> 
+	<text id="planet123" y="50" x="388" class="draggable" />
+	<text id="planet124" y="50" x="510" class="draggable" />
+	<text id="planet125" y="50" x="348" class="draggable" />
+	<text id="planet126" y="95" x="390" fill="#ff0000" class="draggable" />
+	<text id="planet127" y="95" x="422" fill="#ff0000" class="draggable" />
+	<text id="planet128" y="95" x="450" fill="#ff0000" class="draggable">&#9739;</text>
+	<text id="planet129" y="95" x="480" fill="#ff0000" class="draggable" />
+  </g>
+  
+ </g>
+</svg>
