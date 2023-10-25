@@ -3,21 +3,28 @@ Class to define Natal Chart                                                     
 
 Author: Imran Raza Khan
 """
+import os
+os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
+
 import importlib.resources
-from kerykeion import KrInstance, Report, MakeSvgInstance
+#from kerykeion import KrInstance, Report, MakeSvgInstance
 from pathlib import Path
 import json
 from logging import getLogger, basicConfig
 from prettytable import PrettyTable
 import xml.etree.ElementTree as ET
+from kerykeion import AstrologicalSubject
 
 import argparse
 import datetime
 
+import cairosvg
 from cairosvg import svg2png
 
 from common.utils import decimal_to_dms
 import pkg_resources
+
+
 
 CURRENT_DIR = Path(__file__).parent
 
@@ -28,7 +35,7 @@ ZODIAC_SIGNS = {
 
 PLANET_SIGNS = {
     'True_Node': '☊', 'Sun': '☉', 'Moon': '☾', 'Mars': '♂', 'Rahu': '☊', 'Jupiter': '♃', 'Saturn': '♄', 'Mercury': '☿',
-    'Ketu': '☋', 'Venus': '♀', 'Uranus': '', 'Mean_Node': '', 'Pluto': '', 'Neptune': ''
+    'Ketu': '☋', 'Venus': '♀', 'Uranus': '', 'Mean_Node': '', 'Pluto': '', 'Neptune': '', 'Chiron':''
 }
 
 class NatalChart():
@@ -46,7 +53,8 @@ class NatalChart():
             dob = self.birth_date_time
             # Get Planetry positions against Native DOB - Year, Month, Day, Hour, Min
             # Kerykeion is a python library for Astrology. It can calculate all the planet and house positions.
-            native_chart = KrInstance(self.native_name, dob.year, dob.month, dob.day, dob.hour, dob.minute, self.birth_city, "")
+            #native_chart = KrInstance(self.native_name, dob.year, dob.month, dob.day, dob.hour, dob.minute, self.birth_city, "")
+            native_chart = AstrologicalSubject(self.native_name, dob.year, dob.month, dob.day, dob.hour, dob.minute, self.birth_city, "")
             return native_chart.planets_list
         
         def _set_ascendant_sign(self, native_gender):
@@ -87,7 +95,7 @@ class NatalChart():
                         planet_text_id = f"planet{house_no}{planet_counter}"
                         house_planet = house.find(f"{{http://www.w3.org/2000/svg}}text[@id='{planet_text_id}']")
 
-                        if planet.retrograde and planet.name not in ["True_Node", "Mean_Node", "Pluto", "Uranus", "Neptune"]:
+                        if planet.retrograde and planet.name not in ["True_Node", "Mean_Node", "Pluto", "Uranus", "Neptune","Chiron"]:
                             house_planet.text   =   PLANET_SIGNS[planet.name]
                             tspan = ET.SubElement(house_planet,'tspan')
                             tspan.set('font-size', '20')
@@ -97,7 +105,7 @@ class NatalChart():
                             title.text = f"{ decimal_to_dms(planet.position) }"
                             planet_counter += 1
 
-                        elif planet.name not in ["Mean_Node", "Pluto", "Uranus", "Neptune"]:
+                        elif planet.name not in ["Mean_Node", "Pluto", "Uranus", "Neptune","Chiron"]:
                             house_planet.text=f"{PLANET_SIGNS[planet.name]}"
                             title = ET.SubElement(house_planet,'title')
                             title.text = f"{ decimal_to_dms(planet.position) }"
